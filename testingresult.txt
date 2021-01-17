@@ -1,0 +1,104 @@
+
+MIKS20407SW9301R01# traceroute 10.205.192.253 source-interface vlan 301
+traceroute to 10.205.192.253 (10.205.192.253) from 10.122.248.252 (10.122.248.252), 30 hops max, 40 byte packets
+ 1  10.109.145.35 (10.109.145.35)  0.836 ms  0.758 ms  0.677 ms
+ 2  10.109.145.145 (10.109.145.145)  0.831 ms  0.726 ms  0.704 ms
+ 3  10.105.161.109 (10.105.161.109)  0.79 ms  0.691 ms  0.684 ms
+ 4  10.205.192.253 (10.205.192.253)  0.808 ms  0.77 ms  0.713 ms
+
+
+MIKS20407SW9301R01# ping 10.205.192.253 source-interface vlan 301
+PING 10.205.192.253 (10.205.192.253): 56 data bytes
+64 bytes from 10.205.192.253: icmp_seq=0 ttl=251 time=0.931 ms
+64 bytes from 10.205.192.253: icmp_seq=1 ttl=251 time=0.765 ms
+64 bytes from 10.205.192.253: icmp_seq=2 ttl=251 time=0.759 ms
+64 bytes from 10.205.192.253: icmp_seq=3 ttl=251 time=0.705 ms
+
+
+MIKS20407ASA411FWCL/act# packet-tracer input Inside tcp 10.122.248.11 123 10.2$
+
+Phase: 1
+Type: ACCESS-LIST
+Subtype:
+Result: ALLOW
+Config:
+Implicit Rule
+Additional Information:
+MAC Access list
+
+Phase: 2
+Type: ROUTE-LOOKUP
+Subtype: Resolve Egress Interface
+Result: ALLOW
+Config:
+Additional Information:
+found next-hop 10.109.145.37 using egress ifc  DMZ-AVPN
+
+Phase: 3
+Type: ACCESS-LIST
+Subtype: log
+Result: ALLOW
+Config:
+access-group INSIDE-ACL in interface Inside
+access-list INSIDE-ACL remark CSM_RULE_NUMBER_1
+access-list INSIDE-ACL extended permit ip any any log
+Additional Information:
+
+Phase: 4
+Type: NAT
+Subtype: per-session
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 5
+Type: IP-OPTIONS
+Subtype:
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 6
+Type: FOVER
+Subtype: standby-update
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 7
+Type: FLOW-EXPORT
+Subtype:
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 8
+Type: NAT
+Subtype: per-session
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 9
+Type: IP-OPTIONS
+Subtype:
+Result: ALLOW
+Config:
+Additional Information:
+
+Phase: 10
+Type: FLOW-CREATION
+Subtype:
+Result: ALLOW
+Config:
+Additional Information:
+New flow created with id 2227608540, packet dispatched to next module
+
+Result:
+input-interface: Inside
+input-status: up
+input-line-status: up
+output-interface: DMZ-AVPN
+output-status: up
+output-line-status: up
+Action: allow
